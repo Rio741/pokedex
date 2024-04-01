@@ -8,7 +8,6 @@ async function loadPokemon() {
   for (let i = 0; i < pokemonList.length; i++) {
     let pokemon = await getPokemonDetails(pokemonList[i].url);
     renderPokemonInfo(pokemon);
-    console.log(pokemon);
   }
 }
 
@@ -24,10 +23,39 @@ function getPokemonTypes(pokemon) {
   for (let i = 0; i < pokemon.types.length; i++) {
     types += pokemon.types[i].type.name;
     if (i < pokemon.types.length - 1) {
-      types += ", ";
+      types += "<br>";
     }
   }
   return types;
+}
+
+// Mapping-Tabelle für Pokémon-Typen und transparente Farben
+const typeColors = {
+  normal: "rgba(168, 168, 120, 0.8)",
+  fire: "rgba(240, 128, 48, 0.8)",
+  water: "rgba(104, 144, 240, 0.8)",
+  electric: "rgba(248, 208, 48, 0.8)",
+  grass: "rgba(120, 200, 80, 0.8)",
+  ice: "rgba(152, 216, 216, 0.8)",
+  fighting: "rgba(192, 48, 40, 0.8)",
+  poison: "rgba(160, 64, 160, 0.8)",
+  ground: "rgba(224, 192, 104, 0.8)",
+  flying: "rgba(168, 144, 240, 0.8)",
+  psychic: "rgba(248, 88, 136, 0.8)",
+  bug: "rgba(168, 184, 32, 0.8)",
+  rock: "rgba(184, 160, 56, 0.8)",
+  ghost: "rgba(112, 88, 152, 0.8)",
+  dragon: "rgba(112, 56, 248, 0.8)",
+  dark: "rgba(112, 88, 72, 0.8)",
+  steel: "rgba(184, 184, 208, 0.8)",
+  fairy: "rgba(238, 153, 172, 0.8)",
+};
+
+// Funktion, um die Hintergrundfarbe basierend auf den Pokémon-Typen zu erhalten
+function getPokemonColor(types) {
+  // Wenn das Pokémon mehrere Typen hat, verwende den ersten Typ
+  const primaryType = types[0].type.name;
+  return typeColors[primaryType] || "gray"; // Verwende grau, wenn der Typ nicht in der Mapping-Tabelle ist
 }
 
 // Funktion, die die Sprite-URL des Pokémon zurückgibt
@@ -41,8 +69,9 @@ function renderPokemonInfo(pokemon) {
   let spriteUrl = getPokemonSpriteUrl(pokemon);
   pokemon.name =
     pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).toLowerCase();
+  const backgroundColor = getPokemonColor(pokemon.types); // Farbe basierend auf den Pokémon-Typen erhalten
   pokedexElement.innerHTML += /*html*/ `
-    <div class='pokemon'>
+    <div id='pokemon'class='pokemon' style='background-color: ${backgroundColor};'>
       <div class='pkm-card-text'>
         <h2>${pokemon.name}</h2>
         <span class='pkm-types'>${types}</span>
@@ -68,7 +97,7 @@ function filterNames() {
       .getElementsByTagName("h2")[0]
       .innerText.toLowerCase();
     if (pokemonName.includes(searchTerm)) {
-      pokemonElements[i].style.display = "block";
+      pokemonElements[i].style.display = "flex";
     } else {
       pokemonElements[i].style.display = "none";
     }

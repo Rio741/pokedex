@@ -37,7 +37,6 @@ h2 {
 }
 
 .pokemon {
-  background: red;
   color: white;
   width: 250px;
   height: 170px;
@@ -46,6 +45,9 @@ h2 {
   align-items: center;
   margin: 4px;
   cursor: pointer;
+  background-image: url(img/abc.png);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .pokemon-img {
   height: 86px;
@@ -59,12 +61,12 @@ h2 {
   gap: 12px;
 }
 .pkm-types {
-  background-color: rgb(255, 255, 255, 0.5);
+  background-color: rgb(255, 255, 255, 0.2);
   display: flex;
   justify-content: center;
-  height: 22px;
   width: 56px;
   border-radius: 8px;
+  padding: 3px;
 }
 
 .load-more-btn {
