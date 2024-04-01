@@ -39,6 +39,8 @@ function renderPokemonInfo(pokemon) {
   let pokedexElement = document.getElementById("pokedek");
   let types = getPokemonTypes(pokemon);
   let spriteUrl = getPokemonSpriteUrl(pokemon);
+  pokemon.name =
+    pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).toLowerCase();
   pokedexElement.innerHTML += /*html*/ `
     <div class='pokemon'>
       <div class='pkm-card-text'>
@@ -52,4 +54,23 @@ function renderPokemonInfo(pokemon) {
 function loadMorePokemons() {
   COUNT_VALUE += 20;
   loadPokemon();
+}
+
+function filterNames() {
+  const searchTerm = document
+    .getElementById("search-field")
+    .value.toLowerCase();
+  const pokemonElements = document.getElementsByClassName("pokemon");
+
+  for (let i = 0; i < pokemonElements.length; i++) {
+    const pokemonName = pokemonElements[i]
+      .getElementsByClassName("pkm-card-text")[0]
+      .getElementsByTagName("h2")[0]
+      .innerText.toLowerCase();
+    if (pokemonName.includes(searchTerm)) {
+      pokemonElements[i].style.display = "block";
+    } else {
+      pokemonElements[i].style.display = "none";
+    }
+  }
 }

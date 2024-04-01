@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokedex</title>
+    <link rel="shortcut icon" href="img/pokeball.png" type="image/x-icon" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="fonts/fonts.css" />
     <script src="script.js"></script>
@@ -11,7 +12,16 @@
   <body onload="loadPokemon()">
     <div id="main-container">
       <h1>Pokedex</h1>
-
+      <h2>Willkommen in der Welt der Pokemon!</h2>
+      <div>
+        <input
+          type="text"
+          id="search-field"
+          onchange="filterNames()"
+          placeholder="Search Pokemons..."
+        /><button id="search-btn">SEARCH</button>
+      </div>
+      <ul id="list"></ul>
       <div id="pokedek"></div>
       <div class="display-flex">
         <button onclick="loadMorePokemons()" class="load-more-btn">
