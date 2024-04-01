@@ -1,11 +1,10 @@
 let COUNT_VALUE = 0; // Definiere die Anzahl der zu ladenden Pokémon
-const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}&limit=20`;
 
 async function loadPokemon() {
+  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}&limit=20`;
   let response = await fetch(MAIN_URL);
   let data = await response.json();
   let pokemonList = data.results;
-
   for (let i = 0; i < pokemonList.length; i++) {
     let pokemon = await getPokemonDetails(pokemonList[i].url);
     renderPokemonInfo(pokemon);
@@ -19,16 +18,38 @@ async function getPokemonDetails(url) {
   return pokemonData;
 }
 
-function renderPokemonInfo(pokemon) {
-  let pokedexElement = document.getElementById("pokedex");
-
-  pokedexElement.innerHTML += /*html*/ `<div class='pokemon'><div class='position'><h2>${pokemon.name}</h2><span class='elements'>${pokemon["types"]["0"]["type"]["name"]} </span>
-  <span class='elements'> ${pokemon["types"]["1"]["type"]["name"]} </span></div>
-  <img class='img'src='${pokemon["sprites"]["other"]["dream_world"]["front_default"]}'></div>`;
+// Funktion, die die Namen der Pokémon-Typen in einen lesbaren String konvertiert
+function getPokemonTypes(pokemon) {
+  let types = "";
+  for (let i = 0; i < pokemon.types.length; i++) {
+    types += pokemon.types[i].type.name;
+    if (i < pokemon.types.length - 1) {
+      types += ", ";
+    }
+  }
+  return types;
 }
 
-// Aufruf der loadPokemon Funktion beim Laden der Seite
+// Funktion, die die Sprite-URL des Pokémon zurückgibt
+function getPokemonSpriteUrl(pokemon) {
+  return pokemon.sprites.other.dream_world.front_default || "";
+}
 
-function count() {
-  return (COUNT_VALUE = 20);
+function renderPokemonInfo(pokemon) {
+  let pokedexElement = document.getElementById("pokedek");
+  let types = getPokemonTypes(pokemon);
+  let spriteUrl = getPokemonSpriteUrl(pokemon);
+  pokedexElement.innerHTML += /*html*/ `
+    <div class='pokemon'>
+      <div class='pkm-card-text'>
+        <h2>${pokemon.name}</h2>
+        <span class='pkm-types'>${types}</span>
+      </div>
+      <img class='pokemon-img' src='${spriteUrl}'>
+    </div>`;
+}
+
+function loadMorePokemons() {
+  COUNT_VALUE += 20;
+  loadPokemon();
 }

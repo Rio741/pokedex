@@ -9,7 +9,15 @@
     <script src="script.js"></script>
   </head>
   <body onload="loadPokemon()">
-    <div id="main-container"></div>
-    <div id="pokedex"></div>
+    <div id="main-container">
+      <h1>Pokedex</h1>
+
+      <div id="pokedek"></div>
+      <div class="display-flex">
+        <button onclick="loadMorePokemons()" class="load-more-btn">
+          LOAD MORE!
+        </button>
+      </div>
+    </div>
   </body>
 </html>
