@@ -10,6 +10,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 h1 {
@@ -36,18 +38,29 @@ h2 {
   justify-content: center;
 }
 
+#blackscreen {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
 .pokemon {
   color: white;
-  width: 250px;
-  height: 170px;
+  width: 270px;
+  height: 180px;
   border-radius: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
   margin: 4px;
   cursor: pointer;
   background-image: url(img/abc.png);
   background-repeat: no-repeat;
   background-position: center;
+  position: relative;
 }
 .pokemon-img {
   height: 86px;
@@ -67,6 +80,17 @@ h2 {
   width: 56px;
   border-radius: 8px;
   padding: 3px;
+}
+
+.id {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  color: white; /* Du kannst die Farbe entsprechend anpassen */
+  background-color: rgba(0, 0, 0, 0.2); /* Hintergrundfarbe für die ID */
+  padding: 3px 7px; /* Platz um die ID */
+  border-radius: 5px; /* Runde Ecken für die ID-Box */
 }
 
 .load-more-btn {
@@ -111,4 +135,55 @@ h2 {
   border-radius: 5px;
   font-size: 16px;
   transition: border-color 0.3s ease;
+}
+
+#pokecard {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 600px;
+  width: 400px;
+  background-color: white;
+  border-radius: 20px;
+}
+
+.pokemon-card {
+  height: 45%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  background-image: url(img/abc.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.card-details {
+  background-color: white;
+  height: 55%;
+  width: 100%;
+  border-radius: 23px;
+  margin-top: -20px;
+  position: relative;
+}
+.pokemoncard-img {
+  height: 148px;
+  position: absolute; /* Positioniere das Bild absolut */
+  bottom: 0;
+  z-index: 2;
+}
+
+.kreuz-img {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  height: 24px;
 }
