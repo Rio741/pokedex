@@ -4,6 +4,7 @@ body {
   background-size: cover;
   background-position: center bottom;
   background-attachment: fixed;
+  max-width: 1920px;
 }
 
 #main-container {
@@ -166,14 +167,6 @@ h2 {
   border-top-right-radius: 20px;
 }
 
-.card-details {
-  background-color: white;
-  height: 55%;
-  width: 100%;
-  border-radius: 23px;
-  margin-top: -20px;
-  position: relative;
-}
 .pokemoncard-img {
   height: 148px;
   position: absolute; /* Positioniere das Bild absolut */
@@ -186,4 +179,29 @@ h2 {
   top: 10px;
   left: 10px;
   height: 24px;
+}
+.card-details {
+  background-color: white;
+  height: 55%;
+  width: 100%;
+  border-radius: 23px;
+  margin-top: -20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-category {
+  padding: 10px;
+  padding-top: 32px;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+}
+
+#category-content {
+  height: 100%;
+  width: 100%;
 }

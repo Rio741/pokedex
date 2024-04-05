@@ -1,33 +1,5 @@
 let COUNT_VALUE = 0;
 
-async function loadPokemon() {
-  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}&limit=20`;
-  let response = await fetch(MAIN_URL);
-  let data = await response.json();
-  let pokemonList = data.results;
-  for (let i = 0; i < pokemonList.length; i++) {
-    let pokemon = await getPokemonDetails(pokemonList[i].url);
-    renderPokemonInfo(pokemon);
-  }
-}
-
-async function getPokemonDetails(url) {
-  let response = await fetch(url);
-  let pokemonData = await response.json();
-  return pokemonData;
-}
-
-function getPokemonTypes(pokemon) {
-  let types = "";
-  for (let i = 0; i < pokemon.types.length; i++) {
-    types += pokemon.types[i].type.name;
-    if (i < pokemon.types.length - 1) {
-      types += "<br>";
-    }
-  }
-  return types;
-}
-
 const typeColors = {
   normal: "rgba(168, 168, 120, 0.8)",
   fire: "rgba(240, 128, 48, 0.8)",
@@ -49,38 +21,62 @@ const typeColors = {
   fairy: "rgba(238, 153, 172, 0.8)",
 };
 
+async function loadPokemons() {
+  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}&limit=20`;
+  let response = await fetch(MAIN_URL);
+  let textToJson = await response.json();
+  let pokemonList = textToJson.results;
+  for (let i = 0; i < pokemonList.length; i++) {
+    await getPokemonInfos(pokemonList[i].url);
+  }
+}
+
+async function getPokemonInfos(url) {
+  let response = await fetch(url);
+  let pokemon = await response.json();
+  let pokemonImage = pokemon.sprites.other.dream_world.front_default;
+  const formattedId = String(pokemon.id).padStart(3, "0");
+  let secondType = checkSecondPokeType(pokemon);
+  let displayValue = secondType ? "inline" : "none";
+  let pokedek = document.getElementById("pokedek");
+  pokedek.innerHTML += /*html*/ `
+    <div onclick='loadPokemonCard(${
+      pokemon.id
+    })' class='pokemon' style='background-color: ${getPokemonColor(
+    pokemon.types
+  )};'>
+      <div class='pkm-card-text'>
+        <h2>${nameToUpperCase(pokemon)}</h2>
+        <span class='pkm-types'>${pokemon.types[0]["type"].name}</span>
+        <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
+      </div>
+      <span class='id'>#${formattedId}</span>
+      <img class='pokemon-img' src='${pokemonImage}'>
+    </div>`;
+}
+
+function nameToUpperCase(pokemon) {
+  pokemonName =
+    pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).toLowerCase();
+  return pokemonName;
+}
+
+function checkSecondPokeType(pokemon) {
+  if (pokemon.types.length > 1) {
+    return pokemon.types[1]["type"].name;
+  } else {
+    return null;
+  }
+}
+
 function getPokemonColor(types) {
   const primaryType = types[0].type.name;
   return typeColors[primaryType] || "gray";
 }
 
-function getPokemonSpriteUrl(pokemon) {
-  return pokemon.sprites.other.dream_world.front_default || "";
-}
-
-function renderPokemonInfo(pokemon) {
-  let pokedexElement = document.getElementById("pokedek");
-  let types = getPokemonTypes(pokemon);
-  let spriteUrl = getPokemonSpriteUrl(pokemon);
-  pokemon.name =
-    pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).toLowerCase();
-  const backgroundColor = getPokemonColor(pokemon.types);
-
-  const formattedId = String(pokemon.id).padStart(3, "0");
-
-  pokedexElement.innerHTML += /*html*/ `
-    <div onclick='loadPokemonCard(${pokemon.id})' class='pokemon' style='background-color: ${backgroundColor};'>
-      <div class='pkm-card-text'>
-        <h2>${pokemon.name}</h2>
-        <span class='pkm-types'>${types}</span>
-      </div><span class='id'>#${formattedId}</span>
-      <img class='pokemon-img' src='${spriteUrl}'>
-    </div>`;
-}
-
 function loadMorePokemons() {
   COUNT_VALUE += 20;
-  loadPokemon();
+  loadPokemons();
 }
 
 function filterNames() {
@@ -88,7 +84,6 @@ function filterNames() {
     .getElementById("search-field")
     .value.toLowerCase();
   const pokemonElements = document.getElementsByClassName("pokemon");
-
   for (let i = 0; i < pokemonElements.length; i++) {
     const pokemonName = pokemonElements[i]
       .getElementsByClassName("pkm-card-text")[0]
@@ -106,29 +101,58 @@ async function loadPokemonCard(pokemonId) {
   const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
   let response = await fetch(url);
   let pokemonData = await response.json();
-  renderPokemonCard(pokemonData);
+  openPokemonCard(pokemonData);
 }
 
-function renderPokemonCard(pokemonData) {
-  document.getElementById("blackscreen").style.display = "flex";
+function openPokemonCard(pokemonData) {
+  let moves = renderPokemonMoves(pokemonData);
 
+  document.getElementById("blackscreen").style.display = "flex";
   let pokeCard = document.getElementById("pokecard");
   pokeCard.style.display = "flex";
-  pokeCard.innerHTML = `
-    <div class='pokemon-card' style='background-color: ${getPokemonColor(
-      pokemonData.types
-    )};'>
+  const primaryType = pokemonData.types[0].type.name;
+  const backgroundColor = typeColors[primaryType] || "gray";
+  const formattedId = String(pokemonData.id).padStart(3, "0");
+  let secondType = checkSecondPokeType(pokemonData);
+  let displayValue = secondType ? "inline" : "none";
+  let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
+  pokeCard.innerHTML = /*html*/ `
+    <div class='pokemon-card' style='background-color: ${backgroundColor};'>
       <div class='pkm-card-text'>
         <h2>${pokemonData.name}</h2>
-        <span class='pkm-types'>${getPokemonTypes(pokemonData)}</span>
+        <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
+        <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
       </div>
       <img onclick='closeCard()' class='kreuz-img' src='img/kreuz.png'>
-      <span class='id'>#${String(pokemonData.id).padStart(3, "0")}</span>
-      <img class='pokemoncard-img' src='${getPokemonSpriteUrl(pokemonData)}'>
+      <span class='id'>#${formattedId}</span>
+      <img class='pokemoncard-img' src='${pokemonImage}'>
     </div>
-    <div class='card-details'></div>`;
+    <div class="card-details" id="menuCategories">
+<div class="menu-category">
+<span onclick='renderCategory()'><b>About</b></span>
 
-  document.body.style.overflow = "hidden"; /* Deaktiviert das Scrollen */
+  <span onclick='renderCategory("hallo")'><b>Base</b></span>
+  <span onclick='renderCategory()'><b>Evolution</b></span>
+  <span onclick='renderCategory("${moves}")'><b>Moves</b></span>
+
+</div>
+<div id='category-content'></div>
+</div>`;
+  document.body.style.overflow = "hidden";
+}
+
+function renderCategory(index) {
+  let categoryContent = document.getElementById("category-content");
+  categoryContent.innerHTML = `<div>${index}</div>`;
+}
+
+function renderPokemonMoves(pokemonData) {
+  let moves = pokemonData.moves;
+  let movesHTML = "<div>";
+  for (let i = 0; i < moves.length; i++) {
+    movesHTML += `<span>${moves[i].move.name}</span>`;
+  }
+  return movesHTML;
 }
 
 function closeCard() {
