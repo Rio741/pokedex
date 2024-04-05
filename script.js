@@ -53,6 +53,8 @@ async function getPokemonInfos(url) {
       <span class='id'>#${formattedId}</span>
       <img class='pokemon-img' src='${pokemonImage}'>
     </div>`;
+
+  console.log(pokemon);
 }
 
 function nameToUpperCase(pokemon) {
@@ -119,7 +121,7 @@ function openPokemonCard(pokemonData) {
   pokeCard.innerHTML = /*html*/ `
     <div class='pokemon-card' style='background-color: ${backgroundColor};'>
       <div class='pkm-card-text'>
-        <h2>${pokemonData.name}</h2>
+        <h2>${nameToUpperCase(pokemonData)}</h2>
         <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
         <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
       </div>
@@ -134,7 +136,6 @@ function openPokemonCard(pokemonData) {
   <span onclick='renderCategory("hallo")'><b>Base</b></span>
   <span onclick='renderCategory()'><b>Evolution</b></span>
   <span onclick='renderCategory("${moves}")'><b>Moves</b></span>
-
 </div>
 <div id='category-content'></div>
 </div>`;
@@ -150,7 +151,7 @@ function renderPokemonMoves(pokemonData) {
   let moves = pokemonData.moves;
   let movesHTML = "<div>";
   for (let i = 0; i < moves.length; i++) {
-    movesHTML += `<span>${moves[i].move.name}</span>`;
+    movesHTML += `<span class= move>-${moves[i].move.name}</span>`;
   }
   return movesHTML;
 }

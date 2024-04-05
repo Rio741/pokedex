@@ -4,7 +4,7 @@ body {
   background-size: cover;
   background-position: center bottom;
   background-attachment: fixed;
-  max-width: 1920px;
+  text-align: -webkit-center;
 }
 
 #main-container {
@@ -13,6 +13,7 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
+  max-width: 1920px;
 }
 
 h1 {
@@ -169,7 +170,7 @@ h2 {
 
 .pokemoncard-img {
   height: 148px;
-  position: absolute; /* Positioniere das Bild absolut */
+  position: absolute;
   bottom: 0;
   z-index: 2;
 }
@@ -204,4 +205,8 @@ h2 {
 #category-content {
   height: 100%;
   width: 100%;
+}
+.move {
+  border-radius: 8px;
+  padding: 3px;
 }
