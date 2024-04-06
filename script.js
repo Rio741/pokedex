@@ -1,6 +1,6 @@
 let COUNT_VALUE = 0;
-let base_name = [];
-let base_value = [];
+let statNames = [];
+let statValues = [];
 const typeColors = {
   normal: "rgba(168, 168, 120, 0.8)",
   fire: "rgba(240, 128, 48, 0.8)",
@@ -119,7 +119,7 @@ function openPokemonCard(pokemonData) {
   const primaryType = pokemonData.types[0].type.name;
   const backgroundColor = typeColors[primaryType] || "gray";
   const formattedId = String(pokemonData.id).padStart(3, "0");
-  let secondType = checkSecondPokeType(pokemonData);
+  let secondType = checkSecondPokeType(pokemonData); // Implement this function
   let displayValue = secondType ? "inline" : "none";
   let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
   pokeCard.innerHTML = /*html*/ `
@@ -134,22 +134,22 @@ function openPokemonCard(pokemonData) {
       <img class='pokemoncard-img' src='${pokemonImage}'>
     </div>
     <div class="card-details" id="menuCategories">
-<div class="menu-category">
-<span onclick='renderCategory()'><b>About</b></span>
-  <span onclick='loadChart("${bases}")'><b>Base</b></span>
-  <span onclick='renderCategory()'><b>Evolution</b></span>
-  <span onclick='renderCategory("${moves}")'><b>Moves</b></span>
-</div>
-<div id='category-content'>
-<canvas id="myChart"></canvas>
-</div>
-</div>`;
+      <div class="menu-category">
+        <span onclick='renderCategory("About")'><b>About</b></span>
+        <span onclick='loadChart()'><b>Base</b></span>
+        <span onclick='renderCategory("Evolution")'><b>Evolution</b></span>
+        <span onclick='renderCategory("${moves}")'><b>Moves</b></span>
+      </div>
+      <div id='category-content'>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>`;
   document.body.style.overflow = "hidden";
 }
 
-function renderCategory(index) {
+function renderCategory(categoryName) {
   let categoryContent = document.getElementById("category-content");
-  categoryContent.innerHTML = `<div>${index}</div>`;
+  categoryContent.innerHTML = `<div>${categoryName}</div>`;
 }
 
 function renderPokemonMoves(pokemonData) {
@@ -160,17 +160,17 @@ function renderPokemonMoves(pokemonData) {
   }
   return movesHTML;
 }
-function loadChart() {
-  const ctx = document.getElementById("myChart");
 
+async function loadChart() {
+  const ctx = document.getElementById("myChart");
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: [base_name],
+      labels: statNames,
       datasets: [
         {
           label: "# of Votes",
-          data: [base_value],
+          data: statValues,
           borderWidth: 1,
         },
       ],
@@ -191,16 +191,12 @@ function closeCard() {
   document.body.style.overflow = "auto";
 }
 
-async function renderPokemonStats(pokemonData) {
-  let base = pokemonData.stats;
-  let baseHTML = "";
-  let base_stat = "";
-  for (let i = 0; i < base.length; i++) {
-    baseHTML = `${base[i].stat.name}`;
-    base_name.push(baseHTML);
-  }
-  for (let j = 0; j < base.length; j++) {
-    base_stat = `${base[j].base_stat}`;
-    base_value.push(base_stat);
+function renderPokemonStats(pokemonData) {
+  let baseStats = pokemonData.stats;
+  statNames = []; // Setzen Sie die Arrays zurück, bevor Sie neue Daten hinzufügen
+  statValues = [];
+  for (let i = 0; i < baseStats.length; i++) {
+    statNames.push(baseStats[i].stat.name);
+    statValues.push(baseStats[i].base_stat);
   }
 }
