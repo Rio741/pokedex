@@ -1,5 +1,6 @@
 let COUNT_VALUE = 0;
-
+let base_name = [];
+let base_value = [];
 const typeColors = {
   normal: "rgba(168, 168, 120, 0.8)",
   fire: "rgba(240, 128, 48, 0.8)",
@@ -22,7 +23,7 @@ const typeColors = {
 };
 
 async function loadPokemons() {
-  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}&limit=20`;
+  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}`;
   let response = await fetch(MAIN_URL);
   let textToJson = await response.json();
   let pokemonList = textToJson.results;
@@ -53,7 +54,6 @@ async function getPokemonInfos(url) {
       <span class='id'>#${formattedId}</span>
       <img class='pokemon-img' src='${pokemonImage}'>
     </div>`;
-
   console.log(pokemon);
 }
 
@@ -81,7 +81,10 @@ function loadMorePokemons() {
   loadPokemons();
 }
 
-function filterNames() {
+async function filterNames() {
+  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/`;
+  let response = await fetch(MAIN_URL);
+  let textToJson = await response.json();
   const searchTerm = document
     .getElementById("search-field")
     .value.toLowerCase();
@@ -97,6 +100,7 @@ function filterNames() {
       pokemonElements[i].style.display = "none";
     }
   }
+  console.log(textToJson);
 }
 
 async function loadPokemonCard(pokemonId) {
@@ -108,7 +112,7 @@ async function loadPokemonCard(pokemonId) {
 
 function openPokemonCard(pokemonData) {
   let moves = renderPokemonMoves(pokemonData);
-
+  let bases = renderPokemonStats(pokemonData);
   document.getElementById("blackscreen").style.display = "flex";
   let pokeCard = document.getElementById("pokecard");
   pokeCard.style.display = "flex";
@@ -132,12 +136,13 @@ function openPokemonCard(pokemonData) {
     <div class="card-details" id="menuCategories">
 <div class="menu-category">
 <span onclick='renderCategory()'><b>About</b></span>
-
-  <span onclick='renderCategory("hallo")'><b>Base</b></span>
+  <span onclick='loadChart("${bases}")'><b>Base</b></span>
   <span onclick='renderCategory()'><b>Evolution</b></span>
   <span onclick='renderCategory("${moves}")'><b>Moves</b></span>
 </div>
-<div id='category-content'></div>
+<div id='category-content'>
+<canvas id="myChart"></canvas>
+</div>
 </div>`;
   document.body.style.overflow = "hidden";
 }
@@ -155,9 +160,47 @@ function renderPokemonMoves(pokemonData) {
   }
   return movesHTML;
 }
+function loadChart() {
+  const ctx = document.getElementById("myChart");
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: [base_name],
+      datasets: [
+        {
+          label: "# of Votes",
+          data: [base_value],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
 
 function closeCard() {
   document.getElementById("blackscreen").style.display = "none";
   document.getElementById("pokecard").style.display = "none";
   document.body.style.overflow = "auto";
+}
+
+async function renderPokemonStats(pokemonData) {
+  let base = pokemonData.stats;
+  let baseHTML = "";
+  let base_stat = "";
+  for (let i = 0; i < base.length; i++) {
+    baseHTML = `${base[i].stat.name}`;
+    base_name.push(baseHTML);
+  }
+  for (let j = 0; j < base.length; j++) {
+    base_stat = `${base[j].base_stat}`;
+    base_value.push(base_stat);
+  }
 }
