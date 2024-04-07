@@ -1,6 +1,6 @@
 let COUNT_VALUE = 0;
-let statNames = [];
-let statValues = [];
+let statusNames = [];
+let statusValues = [];
 const typeColors = {
   normal: "rgba(168, 168, 120, 0.8)",
   fire: "rgba(240, 128, 48, 0.8)",
@@ -22,7 +22,7 @@ const typeColors = {
   fairy: "rgba(238, 153, 172, 0.8)",
 };
 
-async function loadPokemons() {
+async function fetchPokemons() {
   const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}`;
   let response = await fetch(MAIN_URL);
   let textToJson = await response.json();
@@ -31,7 +31,6 @@ async function loadPokemons() {
     await getPokemonInfos(pokemonList[i].url);
   }
 }
-
 async function getPokemonInfos(url) {
   let response = await fetch(url);
   let pokemon = await response.json();
@@ -40,24 +39,129 @@ async function getPokemonInfos(url) {
   let secondType = checkSecondPokeType(pokemon);
   let displayValue = secondType ? "inline" : "none";
   let pokedek = document.getElementById("pokedek");
-  pokedek.innerHTML += /*html*/ `
-    <div onclick='loadPokemonCard(${
-      pokemon.id
-    })' class='pokemon' style='background-color: ${getPokemonColor(
-    pokemon.types
-  )};'>
+  pokedek.innerHTML += renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonImage);
+  console.log(pokemon);
+}
+
+function renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonImage) {
+  return `<div onclick='fetchPokemonCard(${pokemon.id})' class='pokemon' style='background-color: ${getPokemonColor(pokemon.types)};'>
       <div class='pkm-card-text'>
-        <h2>${nameToUpperCase(pokemon)}</h2>
+        <h2>${formatPokemonName(pokemon)}</h2>
         <span class='pkm-types'>${pokemon.types[0]["type"].name}</span>
         <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
       </div>
       <span class='id'>#${formattedId}</span>
       <img class='pokemon-img' src='${pokemonImage}'>
     </div>`;
-  console.log(pokemon);
 }
 
-function nameToUpperCase(pokemon) {
+async function fetchPokemonCard(pokemonId) {
+  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
+  let response = await fetch(url);
+  let pokemonData = await response.json();
+  getPokemonCardInfos(pokemonData);
+}
+
+function getPokemonCardInfos(pokemonData) {
+  const pokeCard = document.getElementById("pokecard"); // pokeCard initialisieren
+  setCard(pokeCard); // Die Pokecard anzeigen
+  const primaryType = pokemonData.types[0].type.name;
+  const backgroundColor = typeColors[primaryType]
+  const formattedId = String(pokemonData.id).padStart(3, "0");
+  let secondType = checkSecondPokeType(pokemonData);
+  let displayValue = secondType ? "inline" : "none";
+  let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
+  pokeCard.innerHTML = renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage);
+}
+
+
+function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage) {
+  return `
+    <div class='pokemon-card' style='background-color: ${backgroundColor};'>
+      <div class='pkm-card-text'>
+        <h2>${formatPokemonName(pokemonData)}</h2>
+        <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
+        <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
+      </div>
+      <img onclick='closeCard()' class='kreuz-img' src='img/kreuz.png'>
+      <span class='id'>#${formattedId}</span>
+      <img class='pokemoncard-img' src='${pokemonImage}'>
+    </div>
+    <div class="card-details" id="menuCategories">
+      <div class="menu-category">
+        <span onclick='displayCategoryContent("About")'><b>About</b></span>
+        <span onclick='loadChart("${pokemonStatusValues(pokemonData)}")'><b>Base</b></span>
+        <span onclick='displayCategoryContent("Evolution")'><b>Evolution</b></span>
+        <span onclick='displayCategoryContent("${generatePokemonMoves(pokemonData)}")'><b>Moves</b></span>
+      </div>
+      <div id='category-content'>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+  `;
+}
+
+function setCard(pokeCard){
+  pokeCard.style.display = "flex";
+  document.getElementById("blackscreen").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function displayCategoryContent(content) {
+  let categoryContent = document.getElementById("category-content");
+  categoryContent.innerHTML = `<div>${content}</div>`;
+}
+
+let myChart;
+function loadChart() {
+  if (myChart) {
+    myChart.destroy();
+  }
+
+  const ctx = document.getElementById("myChart");
+  myChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: statusNames,
+      datasets: [
+        {
+          label: "# of Votes",
+          data: statusValues,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+
+function pokemonStatusValues(pokemonData) {
+  let baseStats = pokemonData.stats;
+  statusNames = [];
+  statusValues = [];
+  for (let i = 0; i < baseStats.length; i++) {
+    statusNames.push(baseStats[i].stat.name);
+    statusValues.push(baseStats[i].base_stat);
+  }
+}
+
+function generatePokemonMoves(pokemonData) {
+  let moves = pokemonData.moves;
+  let movesHTML = "<div>";
+  for (let i = 0; i < moves.length; i++) {
+    movesHTML += `<span class= move>-${moves[i].move.name}</span>`;
+  }
+  return movesHTML;
+}
+
+
+function formatPokemonName(pokemon) {
   pokemonName =
     pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).toLowerCase();
   return pokemonName;
@@ -78,125 +182,11 @@ function getPokemonColor(types) {
 
 function loadMorePokemons() {
   COUNT_VALUE += 20;
-  loadPokemons();
-}
-
-async function filterNames() {
-  const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/`;
-  let response = await fetch(MAIN_URL);
-  let textToJson = await response.json();
-  const searchTerm = document
-    .getElementById("search-field")
-    .value.toLowerCase();
-  const pokemonElements = document.getElementsByClassName("pokemon");
-  for (let i = 0; i < pokemonElements.length; i++) {
-    const pokemonName = pokemonElements[i]
-      .getElementsByClassName("pkm-card-text")[0]
-      .getElementsByTagName("h2")[0]
-      .innerText.toLowerCase();
-    if (pokemonName.includes(searchTerm)) {
-      pokemonElements[i].style.display = "flex";
-    } else {
-      pokemonElements[i].style.display = "none";
-    }
-  }
-  console.log(textToJson);
-}
-
-async function loadPokemonCard(pokemonId) {
-  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
-  let response = await fetch(url);
-  let pokemonData = await response.json();
-  openPokemonCard(pokemonData);
-}
-
-function openPokemonCard(pokemonData) {
-  let moves = renderPokemonMoves(pokemonData);
-  let bases = renderPokemonStats(pokemonData);
-  document.getElementById("blackscreen").style.display = "flex";
-  let pokeCard = document.getElementById("pokecard");
-  pokeCard.style.display = "flex";
-  const primaryType = pokemonData.types[0].type.name;
-  const backgroundColor = typeColors[primaryType] || "gray";
-  const formattedId = String(pokemonData.id).padStart(3, "0");
-  let secondType = checkSecondPokeType(pokemonData); // Implement this function
-  let displayValue = secondType ? "inline" : "none";
-  let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
-  pokeCard.innerHTML = /*html*/ `
-    <div class='pokemon-card' style='background-color: ${backgroundColor};'>
-      <div class='pkm-card-text'>
-        <h2>${nameToUpperCase(pokemonData)}</h2>
-        <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
-        <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
-      </div>
-      <img onclick='closeCard()' class='kreuz-img' src='img/kreuz.png'>
-      <span class='id'>#${formattedId}</span>
-      <img class='pokemoncard-img' src='${pokemonImage}'>
-    </div>
-    <div class="card-details" id="menuCategories">
-      <div class="menu-category">
-        <span onclick='renderCategory("About")'><b>About</b></span>
-        <span onclick='loadChart()'><b>Base</b></span>
-        <span onclick='renderCategory("Evolution")'><b>Evolution</b></span>
-        <span onclick='renderCategory("${moves}")'><b>Moves</b></span>
-      </div>
-      <div id='category-content'>
-        <canvas id="myChart"></canvas>
-      </div>
-    </div>`;
-  document.body.style.overflow = "hidden";
-}
-
-function renderCategory(categoryName) {
-  let categoryContent = document.getElementById("category-content");
-  categoryContent.innerHTML = `<div>${categoryName}</div>`;
-}
-
-function renderPokemonMoves(pokemonData) {
-  let moves = pokemonData.moves;
-  let movesHTML = "<div>";
-  for (let i = 0; i < moves.length; i++) {
-    movesHTML += `<span class= move>-${moves[i].move.name}</span>`;
-  }
-  return movesHTML;
-}
-
-async function loadChart() {
-  const ctx = document.getElementById("myChart");
-  new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: statNames,
-      datasets: [
-        {
-          label: "# of Votes",
-          data: statValues,
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
+  fetchPokemons();
 }
 
 function closeCard() {
   document.getElementById("blackscreen").style.display = "none";
   document.getElementById("pokecard").style.display = "none";
   document.body.style.overflow = "auto";
-}
-
-function renderPokemonStats(pokemonData) {
-  let baseStats = pokemonData.stats;
-  statNames = []; // Setzen Sie die Arrays zurück, bevor Sie neue Daten hinzufügen
-  statValues = [];
-  for (let i = 0; i < baseStats.length; i++) {
-    statNames.push(baseStats[i].stat.name);
-    statValues.push(baseStats[i].base_stat);
-  }
 }
