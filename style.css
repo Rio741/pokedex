@@ -205,8 +205,31 @@ h2 {
 #category-content {
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  
 }
 .move {
   border-radius: 8px;
   padding: 3px;
+}
+
+h3{
+ 
+}
+.evolution-img{
+  height: 96px;
+}
+#evolutionDiv{
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.headline-evolution{
+ padding-top: 12px;
+ color: red;
+ font-size: 32px;
+ 
+
 }

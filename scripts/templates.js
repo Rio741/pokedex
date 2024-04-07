@@ -26,7 +26,7 @@ function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType
       <div class="menu-category">
         <span onclick='displayCategoryContent("About")'><b>About</b></span>
         <span onclick='loadChart("${pokemonStatusValues(pokemonData)}")'><b>Base</b></span>
-        <span onclick='displayCategoryContent("Evolution")'><b>Evolution</b></span>
+        <span onclick='displayCategoryContent("${fetchEvolution}")'><b>Evolution</b></span>
         <span onclick='displayCategoryContent("${generatePokemonMoves(pokemonData)}")'><b>Moves</b></span>
       </div>
       <div id='category-content'>

@@ -64,21 +64,36 @@ function getPokemonCardInfos(pokemonData) {
   fetchEvolution(pokemonData.id)
 }
 
-async function fetchEvolution(pokemonId){
-  const url = `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`;
-  let response = await fetch(url);
-  let pokemonSpeciesData = await response.json();
-  let evolutionChainUrl = pokemonSpeciesData.evolution_chain.url;
-
-  let evolutionChainResponse = await fetch(evolutionChainUrl);
-  let evolutionChainData = await evolutionChainResponse.json();
-  renderEvolution(evolutionChainData);
-  console.log(evolutionChainData)
+async function fetchEvolution(pokemonId) {
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`);
+  const data = await response.json();
+  const evolutionChainUrl = data.evolution_chain.url;
+  const evolutionChainResponse = await fetch(evolutionChainUrl);
+  const evolutionChainData = await evolutionChainResponse.json();
+  createEvolution(evolutionChainData.chain);
 }
 
-function renderEvolution(evolutionChainData){
-
+async function createEvolution(chain) {
+  const categoryContent = document.getElementById('category-content');
+  categoryContent.innerHTML = '<div><h2 class="headline-evolution">Evolution-Chain</h2><div id="evolutionDiv"></div></div>';
+  while (chain) {
+    const pokemonName = chain.species.name;
+    const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}/`);
+    const pokemonData = await pokemonResponse.json();
+    const pokemonImage = pokemonData.sprites.other.dream_world.front_default;
+    const pokemonDiv = document.createElement('div');
+    pokemonDiv.innerHTML = `
+        <h3>${pokemonName}</h3>
+        <img class='evolution-img' src="${pokemonImage}" alt="${pokemonName}" />
+    `;
+    evolutionDiv.appendChild(pokemonDiv);
+    chain = chain.evolves_to[0];
+  }
 }
+
+
+
+
 
 function setCard(pokeCard){
   pokeCard.style.display = "flex";
