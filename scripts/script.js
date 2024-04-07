@@ -31,6 +31,7 @@ async function fetchPokemons() {
     await getPokemonInfos(pokemonList[i].url);
   }
 }
+
 async function getPokemonInfos(url) {
   let response = await fetch(url);
   let pokemon = await response.json();
@@ -39,23 +40,11 @@ async function getPokemonInfos(url) {
   let secondType = checkSecondPokeType(pokemon);
   let displayValue = secondType ? "inline" : "none";
   let pokedek = document.getElementById("pokedek");
-  pokedek.innerHTML += renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonImage);
+  pokedek.innerHTML += renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonImage);//im templates-ordner
   console.log(pokemon);
 }
 
-function renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonImage) {
-  return `<div onclick='fetchPokemonCard(${pokemon.id})' class='pokemon' style='background-color: ${getPokemonColor(pokemon.types)};'>
-      <div class='pkm-card-text'>
-        <h2>${formatPokemonName(pokemon)}</h2>
-        <span class='pkm-types'>${pokemon.types[0]["type"].name}</span>
-        <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
-      </div>
-      <span class='id'>#${formattedId}</span>
-      <img class='pokemon-img' src='${pokemonImage}'>
-    </div>`;
-}
-
-async function fetchPokemonCard(pokemonId) {
+async function fetchCardPokemon(pokemonId) {
   const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
   let response = await fetch(url);
   let pokemonData = await response.json();
@@ -71,34 +60,7 @@ function getPokemonCardInfos(pokemonData) {
   let secondType = checkSecondPokeType(pokemonData);
   let displayValue = secondType ? "inline" : "none";
   let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
-  pokeCard.innerHTML = renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage);
-}
-
-
-function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage) {
-  return `
-    <div class='pokemon-card' style='background-color: ${backgroundColor};'>
-      <div class='pkm-card-text'>
-        <h2>${formatPokemonName(pokemonData)}</h2>
-        <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
-        <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
-      </div>
-      <img onclick='closeCard()' class='kreuz-img' src='img/kreuz.png'>
-      <span class='id'>#${formattedId}</span>
-      <img class='pokemoncard-img' src='${pokemonImage}'>
-    </div>
-    <div class="card-details" id="menuCategories">
-      <div class="menu-category">
-        <span onclick='displayCategoryContent("About")'><b>About</b></span>
-        <span onclick='loadChart("${pokemonStatusValues(pokemonData)}")'><b>Base</b></span>
-        <span onclick='displayCategoryContent("Evolution")'><b>Evolution</b></span>
-        <span onclick='displayCategoryContent("${generatePokemonMoves(pokemonData)}")'><b>Moves</b></span>
-      </div>
-      <div id='category-content'>
-        <canvas id="myChart"></canvas>
-      </div>
-    </div>
-  `;
+  pokeCard.innerHTML = renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage);//im templates-ordner
 }
 
 function setCard(pokeCard){
