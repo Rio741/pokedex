@@ -41,7 +41,6 @@ async function getPokemonInfos(url) {
   let displayValue = secondType ? "inline" : "none";
   let pokedek = document.getElementById("pokedek");
   pokedek.innerHTML += renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonImage);//im templates-ordner
-  console.log(pokemon);
 }
 
 async function fetchCardPokemon(pokemonId) {
@@ -49,6 +48,7 @@ async function fetchCardPokemon(pokemonId) {
   let response = await fetch(url);
   let pokemonData = await response.json();
   getPokemonCardInfos(pokemonData);
+  
 }
 
 function getPokemonCardInfos(pokemonData) {
@@ -61,6 +61,23 @@ function getPokemonCardInfos(pokemonData) {
   let displayValue = secondType ? "inline" : "none";
   let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
   pokeCard.innerHTML = renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage);//im templates-ordner
+  fetchEvolution(pokemonData.id)
+}
+
+async function fetchEvolution(pokemonId){
+  const url = `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`;
+  let response = await fetch(url);
+  let pokemonSpeciesData = await response.json();
+  let evolutionChainUrl = pokemonSpeciesData.evolution_chain.url;
+
+  let evolutionChainResponse = await fetch(evolutionChainUrl);
+  let evolutionChainData = await evolutionChainResponse.json();
+  renderEvolution(evolutionChainData);
+  console.log(evolutionChainData)
+}
+
+function renderEvolution(evolutionChainData){
+
 }
 
 function setCard(pokeCard){
@@ -79,7 +96,6 @@ function loadChart() {
   if (myChart) {
     myChart.destroy();
   }
-
   const ctx = document.getElementById("myChart");
   myChart = new Chart(ctx, {
     type: "bar",
@@ -87,7 +103,7 @@ function loadChart() {
       labels: statusNames,
       datasets: [
         {
-          label: "# of Votes",
+          label: "Status-Values",
           data: statusValues,
           borderWidth: 1,
         },
