@@ -24,14 +24,16 @@ function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType
     </div>
     <div class="card-details" id="menuCategories">
       <div class="menu-category">
-        <span onclick='displayCategoryContent("About")'><b>About</b></span>
-        <span onclick='loadChart("${pokemonStatusValues(pokemonData)}")'><b>Base</b></span>
-        <span onclick='displayCategoryContent("${fetchEvolution}")'><b>Evolution</b></span>
-        <span onclick='displayCategoryContent("${generatePokemonMoves(pokemonData)}")'><b>Moves</b></span>
+        <button onclick='displayCategoryContent("About")'><b>About</b></button>
+        <button onclick='loadChart("${pokemonStatusValues(pokemonData)}")'><b>Base</b></button>
+        <button onclick='loadEvolution("${pokemonData.id}")'><b>Evolution</b></button>
+        <button onclick='displayCategoryContent("${generatePokemonMoves(pokemonData)}")'><b>Moves</b></button>
       </div>
       <div id='category-content'>
-        <canvas id="myChart"></canvas>
+      <div class='move-container'></div>
       </div>
+      <canvas id="myChart"></canvas>
     </div>
   `;
 }
+

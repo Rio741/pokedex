@@ -48,7 +48,6 @@ async function fetchCardPokemon(pokemonId) {
   let response = await fetch(url);
   let pokemonData = await response.json();
   getPokemonCardInfos(pokemonData);
-  
 }
 
 function getPokemonCardInfos(pokemonData) {
@@ -61,7 +60,8 @@ function getPokemonCardInfos(pokemonData) {
   let displayValue = secondType ? "inline" : "none";
   let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
   pokeCard.innerHTML = renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage);//im templates-ordner
-  fetchEvolution(pokemonData.id)
+  loadChart();
+  console.log(pokemonData)
 }
 
 async function fetchEvolution(pokemonId) {
@@ -76,24 +76,36 @@ async function fetchEvolution(pokemonId) {
 async function createEvolution(chain) {
   const categoryContent = document.getElementById('category-content');
   categoryContent.innerHTML = '<div><h2 class="headline-evolution">Evolution-Chain</h2><div id="evolutionDiv"></div></div>';
+  const evolutionDiv = document.getElementById('evolutionDiv');
   while (chain) {
     const pokemonName = chain.species.name;
-    const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}/`);
-    const pokemonData = await pokemonResponse.json();
-    const pokemonImage = pokemonData.sprites.other.dream_world.front_default;
-    const pokemonDiv = document.createElement('div');
-    pokemonDiv.innerHTML = `
-        <h3>${pokemonName}</h3>
-        <img class='evolution-img' src="${pokemonImage}" alt="${pokemonName}" />
-    `;
+    const formattedName = formatPokemonName(chain.species);
+    const pokemonData = await fetchEvolutionData(pokemonName);
+    const pokemonDiv = createEvolutionDiv(formattedName, pokemonData);
     evolutionDiv.appendChild(pokemonDiv);
     chain = chain.evolves_to[0];
   }
 }
 
+async function fetchEvolutionData(pokemonName) {
+  const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}/`);
+  return await pokemonResponse.json();
+}
 
+function createEvolutionDiv(formattedName, pokemonData) {
+  const pokemonImage = pokemonData.sprites.other.dream_world.front_default;
+  const pokemonDiv = document.createElement('div');
+  pokemonDiv.innerHTML = `
+    <h3>${formattedName}</h3>
+    <img class='evolution-img' src="${pokemonImage}" alt="${formattedName}" />
+  `;
+  return pokemonDiv;
+}
 
-
+async function loadEvolution(pokemonId) {
+  hideChart();
+  await fetchEvolution(pokemonId);
+}
 
 function setCard(pokeCard){
   pokeCard.style.display = "flex";
@@ -102,36 +114,9 @@ function setCard(pokeCard){
 }
 
 function displayCategoryContent(content) {
+  hideChart();
   let categoryContent = document.getElementById("category-content");
   categoryContent.innerHTML = `<div>${content}</div>`;
-}
-
-let myChart;
-function loadChart() {
-  if (myChart) {
-    myChart.destroy();
-  }
-  const ctx = document.getElementById("myChart");
-  myChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: statusNames,
-      datasets: [
-        {
-          label: "Status-Values",
-          data: statusValues,
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
 }
 
 function pokemonStatusValues(pokemonData) {
@@ -146,13 +131,12 @@ function pokemonStatusValues(pokemonData) {
 
 function generatePokemonMoves(pokemonData) {
   let moves = pokemonData.moves;
-  let movesHTML = "<div>";
+  let moveContainer = document.getElementById('move-conteiner')
   for (let i = 0; i < moves.length; i++) {
-    movesHTML += `<span class= move>-${moves[i].move.name}</span>`;
+    moveContainer += `<span class= move>-${moves[i].move.name}</span>`;
   }
-  return movesHTML;
+  return moveContainer;
 }
-
 
 function formatPokemonName(pokemon) {
   pokemonName =
