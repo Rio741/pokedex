@@ -5,6 +5,7 @@ body {
   background-position: center bottom;
   background-attachment: fixed;
   text-align: -webkit-center;
+  font-family: "Open Sans";
 }
 
 #main-container {
@@ -63,7 +64,13 @@ h2 {
   background-repeat: no-repeat;
   background-position: center;
   position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+.pokemon:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
 .pokemon-img {
   height: 86px;
 }
@@ -72,6 +79,15 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding: 12px;
+  gap: 12px;
+}
+
+.pkm-card-text-open {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 12px;
   gap: 12px;
 }
@@ -243,6 +259,8 @@ h2 {
 
 .h3-about{
 color: crimson;
+margin-block-end: 0.3em;
+margin-block-start: 0.7em;
 }
 .evolution-img{
   height: 96px;
@@ -275,3 +293,13 @@ color: crimson;
   cursor: pointer;
 }
 
+.about-content{
+  padding: 0 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#myChart{
+  margin-bottom: 15px;
+}

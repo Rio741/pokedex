@@ -13,7 +13,7 @@ function renderPokemon(pokemon, formattedId, secondType, displayValue, pokemonIm
 function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage) {
   return `
     <div class='pokemon-card' style='background-color: ${backgroundColor};'>
-      <div class='pkm-card-text'>
+      <div class='pkm-card-text-open'>
         <h2>${formatPokemonName(pokemonData)}</h2>
         <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
         <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>

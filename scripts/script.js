@@ -187,15 +187,16 @@ function generateFirstCategory(pokemonData, abilityData) {
   let pokeAbilityEffect = abilityData.effect_entries[0].short_effect;
   let height = pokemonData.height;
   let weight = pokemonData.weight;
+  weight = weight/10;
   document.getElementById('category-content').innerHTML = htmlContent= `
-    <div>
+    <div class='about-content'>
       <h3 class='h3-about'>Ability:</h3>
-      <span>${pokeAbility}</span><br>
-      <span>${pokeAbilityEffect}</span>
+      <span><b>${pokeAbility}</b><br>
+      ${pokeAbilityEffect}</span>
       <h3 class='h3-about'>Height:</h3>
       <span>${height}0 cm</span>
       <h3 class='h3-about'>Weight:</h3>
-      <span>${weight} g</span>
+      <span>${weight} kg</span>
     </div>
   `;
 }
