@@ -192,8 +192,26 @@ h2 {
   flex-direction: column;
 }
 
+.menu-category button {
+  background-color: #e0e0e0; /* Dezente Hintergrundfarbe */
+  color: #333333; /* Textfarbe */
+  border: none;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Flüssiger Übergang */
+}
+
+.menu-category button:hover {
+  background-color: #cecece; /* Farbwechsel bei Hover */
+  transform: translateY(-2px); /* Leichte Anhebung */
+}
+
 .menu-category {
-  padding: 10px;
+  padding-bottom: 8px;
   padding-top: 32px;
   width: 100%;
   cursor: pointer;
@@ -207,16 +225,24 @@ h2 {
   width: 100%;
   display: flex;
   flex-direction: column;
+ 
   
 }
 .move {
+  display: inline-block;
+  margin: 4px;
+  padding: 6px 10px;
   border-radius: 8px;
-  background-color: burlywood;
-
+  background-color: rgba(222, 184, 135, 0.54);
+  
+}
+.moves-container{
+  height: 85%;
+  overflow-y: scroll;
 }
 
-h3{
- 
+.h3-about{
+color: crimson;
 }
 .evolution-img{
   height: 96px;
@@ -229,6 +255,23 @@ h3{
 }
 .headline-evolution{
  padding-top: 12px;
- color: red;
+ color: crimson;
  font-size: 32px;
 }
+
+.arrow-right{
+  height: 48px;
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  cursor: pointer;
+}
+
+.arrow-left{
+  height: 48px;
+  position: absolute;
+  left: -60px;
+  top: 50%;
+  cursor: pointer;
+}
+

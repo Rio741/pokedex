@@ -71,6 +71,8 @@ async function fetchEvolution(pokemonId) {
   const evolutionChainResponse = await fetch(evolutionChainUrl);
   const evolutionChainData = await evolutionChainResponse.json();
   createEvolution(evolutionChainData.chain);
+  console.log(evolutionChainData)
+  
 }
 
 async function createEvolution(chain) {
@@ -113,10 +115,10 @@ function setCard(pokeCard){
   document.body.style.overflow = "hidden";
 }
 
-function displayCategoryContent(content) {
+function displayPokemonMoves(content) {
   hideChart();
   let categoryContent = document.getElementById("category-content");
-  categoryContent.innerHTML = `<div>${content}</div>`;
+  categoryContent.innerHTML = `<div class='moves-container'>${content}</div>`;
 }
 
 function pokemonStatusValues(pokemonData) {
@@ -131,11 +133,11 @@ function pokemonStatusValues(pokemonData) {
 
 function generatePokemonMoves(pokemonData) {
   let moves = pokemonData.moves;
-  let moveContainer = document.getElementById('move-conteiner')
+  let movesHTML = "<div>";
   for (let i = 0; i < moves.length; i++) {
-    moveContainer += `<span class= move>-${moves[i].move.name}</span>`;
+    movesHTML += `<span class= move>${moves[i].move.name}</span>`;
   }
-  return moveContainer;
+  return movesHTML;
 }
 
 function formatPokemonName(pokemon) {
@@ -167,3 +169,43 @@ function closeCard() {
   document.getElementById("pokecard").style.display = "none";
   document.body.style.overflow = "auto";
 }
+
+
+async function fetchFirstCategory(pokemonId) {
+  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
+  const response = await fetch(url);
+  const pokemonData = await response.json();
+  const abilityUrl = pokemonData.abilities[0].ability.url;
+  const abilityResponse = await fetch(abilityUrl);
+  const abilityData = await abilityResponse.json();
+ generateFirstCategory(pokemonData, abilityData);
+}
+
+function generateFirstCategory(pokemonData, abilityData) {
+  hideChart();
+  let pokeAbility = abilityData.name.charAt(0).toUpperCase() + abilityData.name.slice(1).toLowerCase();
+  let pokeAbilityEffect = abilityData.effect_entries[0].short_effect;
+  let height = pokemonData.height;
+  let weight = pokemonData.weight;
+  document.getElementById('category-content').innerHTML = htmlContent= `
+    <div>
+      <h3 class='h3-about'>Ability:</h3>
+      <span>${pokeAbility}</span><br>
+      <span>${pokeAbilityEffect}</span>
+      <h3 class='h3-about'>Height:</h3>
+      <span>${height}0 cm</span>
+      <h3 class='h3-about'>Weight:</h3>
+      <span>${weight} g</span>
+    </div>
+  `;
+}
+
+function clickLeft(pokemonData){
+  fetchCardPokemon(pokemonData);
+}
+
+function clickRight(pokemonData){
+  fetchCardPokemon(pokemonData);
+}
+
+
