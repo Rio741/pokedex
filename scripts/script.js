@@ -1,6 +1,9 @@
 let COUNT_VALUE = 0;
 let statusNames = [];
 let statusValues = [];
+let currentPokemon;
+let allPokemon = [];
+let amountOfAllPokemon; 
 const typeColors = {
   normal: "rgba(168, 168, 120, 0.8)",
   fire: "rgba(240, 128, 48, 0.8)",
@@ -21,6 +24,33 @@ const typeColors = {
   steel: "rgba(184, 184, 208, 0.8)",
   fairy: "rgba(238, 153, 172, 0.8)",
 };
+
+async function init() {
+ await howManyPokemonAreThere();
+ pushAllPokemon();
+ fetchPokemons()
+}
+
+async function howManyPokemonAreThere() {
+  let url = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0.';
+  let response = await fetch(url);
+  let amountOfPokemon = await response.json();
+  amountOfAllPokemon = await amountOfPokemon['count'];
+  console.log(amountOfAllPokemon);
+}
+
+
+async function pushAllPokemon() {
+  for (let i = 1; i < 1026; i++) {
+      let url = `https://pokeapi.co/api/v2/pokemon/${i}`;
+      let response = await fetch(url);
+      currentPokemon = await response.json();
+      allPokemon.push(currentPokemon);
+  }
+  console.log(allPokemon[1]);
+}
+
+
 
 async function fetchPokemons() {
   const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}`;
@@ -209,4 +239,24 @@ function clickRight(pokemonData){
   fetchCardPokemon(pokemonData);
 }
 
+async function filterNames() {
+  const searchTerm = document.getElementById("search-field").value.toLowerCase();
+  const pokedek = document.getElementById("pokedek");
+  let loadMoreBtn = document.getElementById('load-more-btn');
+  
+  if (searchTerm.length >= 3) {
+    const filteredPokemon = allPokemon.filter(pokemon => {
+      return pokemon.name.toLowerCase().includes(searchTerm);
+    });
+    pokedek.innerHTML = "";
+    filteredPokemon.forEach(pokemon => {
+      getPokemonInfos(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
+      loadMoreBtn.style.display='none';
+    });
+  } else if (searchTerm.length === 0) {
+    pokedek.innerHTML = "";
+    fetchPokemons();
+    loadMoreBtn.style.display='flex';
+  }
+}
 

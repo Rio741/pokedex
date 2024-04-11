@@ -10,6 +10,7 @@ const customColors = [
 function loadChart() {
   document.getElementById('category-content').innerHTML='';
   const ctx = document.getElementById('myChart');
+  
   ctx.style.display = "flex"
   myChart = new Chart(ctx, {
     type: 'bar',
