@@ -1,9 +1,7 @@
 let COUNT_VALUE = 0;
 let statusNames = [];
 let statusValues = [];
-let currentPokemon;
 let allPokemon = [];
-let amountOfAllPokemon; 
 const typeColors = {
   normal: "rgba(168, 168, 120, 0.8)",
   fire: "rgba(240, 128, 48, 0.8)",
@@ -26,31 +24,26 @@ const typeColors = {
 };
 
 async function init() {
- await howManyPokemonAreThere();
- pushAllPokemon();
- fetchPokemons()
+ await fetchHolePokemonList();
+ pushAllPokemonsToArray();
+ fetchPokemons() //Pokemon-Mainpage
 }
 
-async function howManyPokemonAreThere() {
+async function fetchHolePokemonList() {
   let url = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0.';
   let response = await fetch(url);
   let amountOfPokemon = await response.json();
-  amountOfAllPokemon = await amountOfPokemon['count'];
-  console.log(amountOfAllPokemon);
+  let amountOfAllPokemon = await amountOfPokemon['count'];
 }
 
-
-async function pushAllPokemon() {
+async function pushAllPokemonsToArray() {
   for (let i = 1; i < 1026; i++) {
       let url = `https://pokeapi.co/api/v2/pokemon/${i}`;
       let response = await fetch(url);
-      currentPokemon = await response.json();
+      let currentPokemon = await response.json();
       allPokemon.push(currentPokemon);
   }
-  console.log(allPokemon[1]);
 }
-
-
 
 async function fetchPokemons() {
   const MAIN_URL = `https://pokeapi.co/api/v2/pokemon/?offset=${COUNT_VALUE}`;
@@ -81,8 +74,8 @@ async function fetchCardPokemon(pokemonId) {
 }
 
 function getPokemonCardInfos(pokemonData) {
-  const pokeCard = document.getElementById("pokecard"); // pokeCard initialisieren
-  setCard(pokeCard); // Die Pokecard anzeigen
+  const pokeCard = document.getElementById("pokecard");
+  setPokemonCard(pokeCard); // Die Pokecard anzeigen
   const primaryType = pokemonData.types[0].type.name;
   const backgroundColor = typeColors[primaryType]
   const formattedId = String(pokemonData.id).padStart(3, "0");
@@ -91,9 +84,34 @@ function getPokemonCardInfos(pokemonData) {
   let pokemonImage = pokemonData.sprites.other.dream_world.front_default;
   pokeCard.innerHTML = renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType, displayValue, pokemonImage);//im templates-ordner
   loadChart();
-  console.log(pokemonData)
 }
 
+function loadMorePokemons() {
+  COUNT_VALUE += 20;
+  fetchPokemons();
+}
+
+function setPokemonCard(pokeCard){
+  pokeCard.style.display = "flex";
+  document.getElementById("blackscreen").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function closePokemonCard() {
+  document.getElementById("blackscreen").style.display = "none";
+  document.getElementById("pokecard").style.display = "none";
+  document.body.style.overflow = "auto";
+}
+
+function clickLeft(pokemonData){
+  fetchCardPokemon(pokemonData);
+}
+
+function clickRight(pokemonData){
+  fetchCardPokemon(pokemonData);
+}
+
+//Functions Evolution
 async function fetchEvolution(pokemonId) {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`);
   const data = await response.json();
@@ -101,8 +119,6 @@ async function fetchEvolution(pokemonId) {
   const evolutionChainResponse = await fetch(evolutionChainUrl);
   const evolutionChainData = await evolutionChainResponse.json();
   createEvolution(evolutionChainData.chain);
-  console.log(evolutionChainData)
-  
 }
 
 async function createEvolution(chain) {
@@ -139,10 +155,14 @@ async function loadEvolution(pokemonId) {
   await fetchEvolution(pokemonId);
 }
 
-function setCard(pokeCard){
-  pokeCard.style.display = "flex";
-  document.getElementById("blackscreen").style.display = "flex";
-  document.body.style.overflow = "hidden";
+//Pokemon-Category-Moves
+function generatePokemonMoves(pokemonData) {
+  let moves = pokemonData.moves;
+  let movesHTML = "<div>";
+  for (let i = 0; i < moves.length; i++) {
+    movesHTML += `<span class= move>${moves[i].move.name}</span>`;
+  }
+  return movesHTML;
 }
 
 function displayPokemonMoves(content) {
@@ -151,6 +171,7 @@ function displayPokemonMoves(content) {
   categoryContent.innerHTML = `<div class='moves-container'>${content}</div>`;
 }
 
+//Pokemon-StatusValues for Chart
 function pokemonStatusValues(pokemonData) {
   let baseStats = pokemonData.stats;
   statusNames = [];
@@ -161,15 +182,28 @@ function pokemonStatusValues(pokemonData) {
   }
 }
 
-function generatePokemonMoves(pokemonData) {
-  let moves = pokemonData.moves;
-  let movesHTML = "<div>";
-  for (let i = 0; i < moves.length; i++) {
-    movesHTML += `<span class= move>${moves[i].move.name}</span>`;
-  }
-  return movesHTML;
+//Pokemon-Category-About
+async function fetchFirstCategory(pokemonId) {
+  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
+  const response = await fetch(url);
+  const pokemonData = await response.json();
+  const abilityUrl = pokemonData.abilities[0].ability.url;
+  const abilityResponse = await fetch(abilityUrl);
+  const abilityData = await abilityResponse.json();
+ generateFirstCategory(pokemonData, abilityData);
 }
 
+function generateFirstCategory(pokemonData, abilityData) {
+  hideChart();
+  let pokeAbility = abilityData.name.charAt(0).toUpperCase() + abilityData.name.slice(1).toLowerCase();
+  let pokeAbilityEffect = abilityData.effect_entries[0].short_effect;
+  let height = pokemonData.height;
+  let weight = pokemonData.weight;
+  let formattedWeight = weight/10;
+  document.getElementById('category-content').innerHTML = htmlContent= renderFirstCategory(pokeAbility, pokeAbilityEffect, height, formattedWeight);
+}
+
+//functions for Pokemon Infos
 function formatPokemonName(pokemon) {
   pokemonName =
     pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1).toLowerCase();
@@ -189,74 +223,31 @@ function getPokemonColor(types) {
   return typeColors[primaryType] || "gray";
 }
 
-function loadMorePokemons() {
-  COUNT_VALUE += 20;
-  fetchPokemons();
-}
-
-function closeCard() {
-  document.getElementById("blackscreen").style.display = "none";
-  document.getElementById("pokecard").style.display = "none";
-  document.body.style.overflow = "auto";
-}
-
-
-async function fetchFirstCategory(pokemonId) {
-  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
-  const response = await fetch(url);
-  const pokemonData = await response.json();
-  const abilityUrl = pokemonData.abilities[0].ability.url;
-  const abilityResponse = await fetch(abilityUrl);
-  const abilityData = await abilityResponse.json();
- generateFirstCategory(pokemonData, abilityData);
-}
-
-function generateFirstCategory(pokemonData, abilityData) {
-  hideChart();
-  let pokeAbility = abilityData.name.charAt(0).toUpperCase() + abilityData.name.slice(1).toLowerCase();
-  let pokeAbilityEffect = abilityData.effect_entries[0].short_effect;
-  let height = pokemonData.height;
-  let weight = pokemonData.weight;
-  weight = weight/10;
-  document.getElementById('category-content').innerHTML = htmlContent= `
-    <div class='about-content'>
-      <h3 class='h3-about'>Ability:</h3>
-      <span><b>${pokeAbility}</b><br>
-      ${pokeAbilityEffect}</span>
-      <h3 class='h3-about'>Height:</h3>
-      <span>${height}0 cm</span>
-      <h3 class='h3-about'>Weight:</h3>
-      <span>${weight} kg</span>
-    </div>
-  `;
-}
-
-function clickLeft(pokemonData){
-  fetchCardPokemon(pokemonData);
-}
-
-function clickRight(pokemonData){
-  fetchCardPokemon(pokemonData);
-}
-
+//Search-field
 async function filterNames() {
   const searchTerm = document.getElementById("search-field").value.toLowerCase();
   const pokedek = document.getElementById("pokedek");
   let loadMoreBtn = document.getElementById('load-more-btn');
-  
   if (searchTerm.length >= 3) {
-    const filteredPokemon = allPokemon.filter(pokemon => {
-      return pokemon.name.toLowerCase().includes(searchTerm);
-    });
-    pokedek.innerHTML = "";
-    filteredPokemon.forEach(pokemon => {
-      getPokemonInfos(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
-      loadMoreBtn.style.display='none';
-    });
+    await filterAndDisplayPokemon(searchTerm, pokedek);
+    loadMoreBtn.style.display = 'none';
   } else if (searchTerm.length === 0) {
-    pokedek.innerHTML = "";
-    fetchPokemons();
-    loadMoreBtn.style.display='flex';
+    resetSearch(pokedek, loadMoreBtn);
   }
 }
 
+async function filterAndDisplayPokemon(searchTerm, pokedek) {
+  const filteredPokemon = allPokemon.filter(pokemon => {
+    return pokemon.name.toLowerCase().includes(searchTerm);
+  });
+  pokedek.innerHTML = "";
+  for (const pokemon of filteredPokemon) {
+    await getPokemonInfos(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
+  }
+}
+
+function resetSearch(pokedek, loadMoreBtn) {
+  pokedek.innerHTML = "";
+  fetchPokemons();
+  loadMoreBtn.style.display = 'flex';
+}

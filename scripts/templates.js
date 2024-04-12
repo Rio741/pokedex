@@ -18,7 +18,7 @@ function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType
         <span class='pkm-types'>${pokemonData.types[0].type.name}</span>
         <span class='pkm-types' style='display: ${displayValue};'>${secondType}</span>
       </div>
-      <img onclick='closeCard()' class='kreuz-img' src='img/kreuz.png'>
+      <img onclick='closePokemonCard()' class='kreuz-img' src='img/kreuz.png'>
       <span class='id'>#${formattedId}</span>
       <img class='pokemoncard-img' src='${pokemonImage}'>
     </div>
@@ -36,4 +36,17 @@ function renderPokemonCard(pokemonData, backgroundColor, formattedId, secondType
     <img onclick='clickLeft("${pokemonData.id-1}")' src="img/pfeil-links.png" alt="" class="arrow-left">
     <img onclick='clickRight("${pokemonData.id+1}")' src="img/pfeil-rechts.png" alt="" class="arrow-right">
   `;
+}
+
+function renderFirstCategory(pokeAbility, pokeAbilityEffect, height, formattedWeight){
+  return `
+  <div class='about-content'>
+    <h3 class='h3-about'>Ability:</h3>
+    <span class='about-span'><b>${pokeAbility}</b><br>
+    ${pokeAbilityEffect}</span>
+    <h3 class='h3-about'>Height:</h3>
+    <span class='about-span'>${height}0 cm</span>
+    <h3 class='h3-about'>Weight:</h3>
+    <span class='about-span'>${formattedWeight} kg</span>
+  </div>`
 }
