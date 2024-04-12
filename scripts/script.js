@@ -104,7 +104,9 @@ function closePokemonCard() {
 }
 
 function clickLeft(pokemonData){
-  fetchCardPokemon(pokemonData);
+  if (pokemonData > 0) {
+    fetchCardPokemon(pokemonData);
+  }
 }
 
 function clickRight(pokemonData){
@@ -227,12 +229,16 @@ function getPokemonColor(types) {
 async function filterNames() {
   const searchTerm = document.getElementById("search-field").value.toLowerCase();
   const pokedek = document.getElementById("pokedek");
-  let loadMoreBtn = document.getElementById('load-more-btn');
-  if (searchTerm.length >= 3) {
-    await filterAndDisplayPokemon(searchTerm, pokedek);
-    loadMoreBtn.style.display = 'none';
-  } else if (searchTerm.length === 0) {
-    resetSearch(pokedek, loadMoreBtn);
+  await filterAndDisplayPokemon(searchTerm, pokedek);
+  toggleLoadMoreButton(searchTerm);
+}
+
+async function toggleLoadMoreButton(searchTerm) {
+  const loadMoreButton = document.getElementById("load-more-btn");
+  if (searchTerm.trim() !== "") {
+    loadMoreButton.style.display = "none";
+  } else {
+    loadMoreButton.style.display = "block";
   }
 }
 
@@ -241,13 +247,10 @@ async function filterAndDisplayPokemon(searchTerm, pokedek) {
     return pokemon.name.toLowerCase().includes(searchTerm);
   });
   pokedek.innerHTML = "";
+  let counter = 0;
   for (const pokemon of filteredPokemon) {
+    if (counter >= 20) break; // Limit
     await getPokemonInfos(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
+    counter++;
   }
-}
-
-function resetSearch(pokedek, loadMoreBtn) {
-  pokedek.innerHTML = "";
-  fetchPokemons();
-  loadMoreBtn.style.display = 'flex';
 }
