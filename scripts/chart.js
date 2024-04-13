@@ -7,11 +7,10 @@ const customColors = [
   'rgb(255, 159, 64)', // Orange
 ];
 
-function loadChart() {
-  document.getElementById('category-content').innerHTML='';
+function loadChart(pokemonData) {
+  let content = document.getElementById('category-content')
+  content.innerHTML = `<div class="chartbox"><canvas id="myChart" class="chart"></canvas></div>`;
   const ctx = document.getElementById('myChart');
-  
-  ctx.style.display = "flex"
   myChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -33,9 +32,3 @@ function loadChart() {
   });
 }
 
-function hideChart() {
-  const chartCanvas = document.getElementById("myChart");
-  if (chartCanvas) {
-    chartCanvas.style.display = "none";
-  }
-}

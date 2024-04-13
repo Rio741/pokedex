@@ -5,7 +5,7 @@ body {
   background-position: center bottom;
   background-attachment: fixed;
   text-align: -webkit-center;
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
 }
 
 #main-container {
@@ -204,21 +204,21 @@ h2 {
 }
 
 .menu-category button {
-  background-color: #e0e0e0; /* Dezente Hintergrundfarbe */
-  color: #333333; /* Textfarbe */
+  background-color: #e0e0e0;
+  color: #333333;
   border: none;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: bold;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Flüssiger Übergang */
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .menu-category button:hover {
-  background-color: #cecece; /* Farbwechsel bei Hover */
-  transform: translateY(-2px); /* Leichte Anhebung */
+  background-color: #cecece;
+  transform: translateY(-2px);
 }
 
 .menu-category {
@@ -236,6 +236,12 @@ h2 {
   width: 100%;
   display: flex;
   flex-direction: column; 
+}
+
+#myChart{
+ margin-top: 32px !important;
+  position: absolute !important;
+  height: 222px !important;
 }
 
 .move {
@@ -365,4 +371,9 @@ margin-block-start: 0.7em;
 .pkm-card-text-open {
   gap: 3px;
 }
+
+#myChart{
+  margin-top: 24px !important;
+  height: 167px !important;
+ }
 }
