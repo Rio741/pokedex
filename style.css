@@ -109,10 +109,10 @@ h2 {
   top: 10px;
   right: 10px;
   font-size: 16px;
-  color: white; /* Du kannst die Farbe entsprechend anpassen */
-  background-color: rgba(0, 0, 0, 0.2); /* Hintergrundfarbe für die ID */
-  padding: 3px 7px; /* Platz um die ID */
-  border-radius: 5px; /* Runde Ecken für die ID-Box */
+  color: white;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 3px 7px;
+  border-radius: 5px;
 }
 
 #load-more-btn {
